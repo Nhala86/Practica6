@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Conection {
+public class Connection {
 	private Socket socket;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
@@ -16,7 +16,7 @@ public class Conection {
 	 * @param socket
 	 * @throws IOException
 	 */
-	public Conection(Socket socket) throws IOException{
+	public Connection(Socket socket) throws IOException{
 		this.socket = socket;
 		this.out = new ObjectOutputStream(this.socket.getOutputStream());
 		this.in = new ObjectInputStream(this.socket.getInputStream());

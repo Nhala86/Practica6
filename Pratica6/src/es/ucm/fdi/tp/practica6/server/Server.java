@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import es.ucm.fdi.tp.practica6.conection.Conection;
+import es.ucm.fdi.tp.practica6.conection.Connection;
 import es.ucm.fdi.tp.practica6.server.response.ChangeTurnResponse;
 import es.ucm.fdi.tp.practica6.server.response.ErrorResponse;
 import es.ucm.fdi.tp.practica6.server.response.GameOverResponse;
@@ -69,7 +69,7 @@ public class Server extends Controller implements GameObserver {
 	 * <b>List</b>
 	 * <p>Arraylist de clientes conectados al servidor</p>
 	 */
-	private List<Conection> clients;
+	private List<Connection> clients;
 	
 	/**
 	 * <b>infoArea</b>
@@ -114,7 +114,7 @@ public class Server extends Controller implements GameObserver {
 		this.numPlayers = pieces.size();
 		this.numOfConnectedPlayers = 0;
 		this.gameFactory = gameFactory;
-		this.clients = new ArrayList<Conection>();
+		this.clients = new ArrayList<Connection>();
 		
 		game.addObserver(this);
 	}
@@ -279,7 +279,7 @@ public class Server extends Controller implements GameObserver {
  */
 	private void handleRequest(Socket s) throws IOException, ClassNotFoundException {
 		try{
-		Conection c = new Conection(s);
+		Connection c = new Connection(s);
 		
 		Object clientRequest = c.getObject(); //1er mensaje del cliente DEBE ser string "Connect"
 		if(!(clientRequest instanceof String) && !((String)clientRequest).equalsIgnoreCase("Connect")){
@@ -320,7 +320,7 @@ public class Server extends Controller implements GameObserver {
 	 * 
 	 * @param c
 	 */
-	private void startClientListener(Conection c) {
+	private void startClientListener(Connection c) {
 	this.gameOver = false;
 	
 	Thread t = new Thread();
