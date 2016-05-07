@@ -26,6 +26,7 @@ import es.ucm.fdi.tp.basecode.minmax.MinMax;
 import es.ucm.fdi.tp.practica5.ataxx.AtaxxFactoryExt;
 import es.ucm.fdi.tp.practica5.connectn.ConnectNFactoryExt;
 import es.ucm.fdi.tp.practica5.ttt.TicTacToeFactoryExt;
+import es.ucm.fdi.tp.practica6.server.Server;
 
 /**
  * This is the class with the main method for the board games application.
@@ -1162,17 +1163,15 @@ public class Main {
 	 * 
 	 */
 	private static void startServer() {
-		/*
-		Game g = new Game(gameFactory.gameRules()); 
-		GameSever c = new GameServer(g ,pieces, serverPort);
 		
+		Server c = new Server(gameFactory, pieces, serverPort); 
+			
 		try{
 			c.start();
 		}catch(Exception e){
 			System.err.println("Something goes wrong, the server can´t start");
 		}
-		*/
-		throw new UnsupportedOperationException("The server isn´t working yet");
+		
 	}
 
 	/**
