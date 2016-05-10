@@ -1,5 +1,7 @@
 package es.ucm.fdi.tp.practica5.connectn;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
@@ -38,9 +40,9 @@ public class ConnectNFactoryExt extends ConnectNFactory {
 	}
 
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) {
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
 	
-		SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
 				new ConnectnSwingview(game, ctrl, viewPiece, randPlayer, aiPlayer);

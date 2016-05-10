@@ -1,7 +1,7 @@
 package es.ucm.fdi.tp.practica6.server.response;
 
-import es.ucm.fdi.tp.practica6.server.response.Response;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
+import es.ucm.fdi.tp.practica6.server.response.Response;
 
 public class ErrorResponse implements Response{
 

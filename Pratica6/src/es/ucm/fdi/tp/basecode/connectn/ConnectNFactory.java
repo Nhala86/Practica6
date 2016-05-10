@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp.basecode.connectn;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -94,7 +95,7 @@ public class ConnectNFactory implements GameFactory {
 
 	@Override
 	public void createSwingView(final Observable<GameObserver> g, final Controller c, final Piece viewPiece,
-			Player random, Player ai) {
+			Player random, Player ai) throws InvocationTargetException, InterruptedException {
 		throw new UnsupportedOperationException("There is no swing view");
 	}
 

@@ -16,9 +16,9 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.practica6.conection.Connection;
+import es.ucm.fdi.tp.practica6.connection.Connection;
 
-public class Client extends Controller implements Observable<GameObserver> {
+public class GameClient extends Controller implements Observable<GameObserver> {
 	
 	private String host;
 	private int port;
@@ -28,21 +28,21 @@ public class Client extends Controller implements Observable<GameObserver> {
 	private Connection connectioToServer;
 	private boolean gameOver;
 
-	public Client(String host, int port) throws Exception {
+	public GameClient(String host, int port) throws Exception {
 		super(null, null);
 		this.host = host;
 		this.port = port;
 		connect();
 	}
 
-	private void connect() throws Exception {
+	private void connect() throws IOException {		
 		connectioToServer = new Connection(new Socket(host, port));
 		connectioToServer.sendObject("Connect");
 		
 		
 		Object response = this.host;
 		if(response instanceof Exception){
-			throw (Exception) response;			
+			throw (IOException) response;			
 		}
 		try{
 			gameFactory = (GameFactory) connectioToServer.getObject();
@@ -93,7 +93,7 @@ public class Client extends Controller implements Observable<GameObserver> {
 	// send the object cmd to the server
 	}	
 	
-	public void star(){
+	/*public void star(){
 		this.observers.add(port, null);
 		gameOver = false;
 		while(!gameOver){
@@ -101,6 +101,6 @@ public class Client extends Controller implements Observable<GameObserver> {
 				
 			}catch(ClassNotFoundException | IOException e){}
 		}
-	}
+	}*/
 	
 }

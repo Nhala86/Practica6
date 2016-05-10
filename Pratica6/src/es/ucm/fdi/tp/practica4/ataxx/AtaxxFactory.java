@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp.practica4.ataxx;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -97,7 +98,7 @@ public class AtaxxFactory implements GameFactory {
 	}
 
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) {
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
 		throw new UnsupportedOperationException("There is no swing view");
 	}
 

@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ import es.ucm.fdi.tp.basecode.minmax.MinMax;
 import es.ucm.fdi.tp.practica5.ataxx.AtaxxFactoryExt;
 import es.ucm.fdi.tp.practica5.connectn.ConnectNFactoryExt;
 import es.ucm.fdi.tp.practica5.ttt.TicTacToeFactoryExt;
-import es.ucm.fdi.tp.practica6.server.Server;
+import es.ucm.fdi.tp.practica6.server.GameServer;
 
 /**
  * This is the class with the main method for the board games application.
@@ -1105,9 +1106,11 @@ public class Main {
 	 * Inicia un juego en modo local. Debe llamarse despues de
 	 * {@link #parseArgs(String[])} para que los atributos tengan los valores
 	 * correctos.
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
 	 * 
 	 */
-	public static void startGame() {
+	public static void startGame() throws InvocationTargetException, InterruptedException {
 		Game g = new Game(gameFactory.gameRules());
 		Controller c = null;
 
@@ -1164,7 +1167,7 @@ public class Main {
 	 */
 	private static void startServer() {
 		
-		Server c = new Server(gameFactory, pieces, serverPort); 
+		GameServer c = new GameServer(gameFactory, pieces, serverPort); 
 			
 		try{
 			c.start();
@@ -1209,9 +1212,11 @@ public class Main {
 	 * 
 	 * @param args
 	 *            Command-line arguments.
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
 	 * 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvocationTargetException, InterruptedException {
 		parseArgs(args);
 		switch (applicationMode) {
 		case NORMAL:

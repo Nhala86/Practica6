@@ -1,5 +1,7 @@
 package es.ucm.fdi.tp.practica5.ttt;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
@@ -30,8 +32,8 @@ public class TicTacToeFactoryExt extends TicTacToeFactory {
 	}
 	
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) {
-		SwingUtilities.invokeLater(new Runnable() {
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
+		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
 				new TicTacToeSwingView(game, ctrl, viewPiece, randPlayer, aiPlayer);

@@ -6,7 +6,7 @@ import java.util.List;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.practica6.conection.Connection;
+import es.ucm.fdi.tp.practica6.connection.Connection;
 import es.ucm.fdi.tp.practica6.server.response.Response;
 
 public class GameStartResponse implements Response{
@@ -34,11 +34,11 @@ public class GameStartResponse implements Response{
 		
 	}
 	
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn){
+	/*public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn){
 		forwardNotification(new GameStartResponse(board, gameDesc, pieces, turn));
-	}
+	}*/
 
-	private void forwardNotification(Response r) {
+	/*private void forwardNotification(Response r) {		
 		try{
 			for(Connection c : clients){
 				c.sendObject(r);
@@ -47,7 +47,7 @@ public class GameStartResponse implements Response{
 			stopTheGame();
 		}
 		
-	}
+	}*/
 
 	private void stopTheGame() {
 		// TODO Auto-generated method stub

@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp.basecode.bgame.control;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.ucm.fdi.tp.basecode.bgame.model.AIAlgorithm;
@@ -163,8 +164,10 @@ public interface GameFactory extends java.io.Serializable {
 	 *            El jugador que se va a utilizar para generar movimientos
 	 *            automaticos. Si es {@code null}, la vista no permite jugadores
 	 *            IA (automaticos).
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
 	 * 
 	 */
 	void createSwingView(final Observable<GameObserver> game, final Controller ctrl, final Piece viewPiece,
-			Player randPlayer, Player aiPlayer);
+			Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException;
 }
