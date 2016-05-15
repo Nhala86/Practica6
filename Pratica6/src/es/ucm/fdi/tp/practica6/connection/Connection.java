@@ -9,11 +9,6 @@ import es.ucm.fdi.tp.basecode.bgame.control.GameFactory;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-/**
- * Buffer de comunicacion
- * @author Kadaiser
- *
- */
 public class Connection {
 
 	private Socket socket;
@@ -66,16 +61,5 @@ public class Connection {
 	public void stop() throws IOException{
 		this.socket.close();
 	}
-
-	public void sendObject(GameError gameError) {
-		try {
-			out.writeObject(gameError);
-			out.flush();
-			out.reset();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 }

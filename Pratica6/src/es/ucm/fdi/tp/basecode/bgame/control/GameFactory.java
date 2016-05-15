@@ -169,5 +169,5 @@ public interface GameFactory extends java.io.Serializable {
 	 * 
 	 */
 	void createSwingView(final Observable<GameObserver> game, final Controller ctrl, final Piece viewPiece,
-			Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException;
+			Player randPlayer, Player aiPlayer);
 }

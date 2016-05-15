@@ -95,7 +95,7 @@ public class ConnectNFactory implements GameFactory {
 
 	@Override
 	public void createSwingView(final Observable<GameObserver> g, final Controller c, final Piece viewPiece,
-			Player random, Player ai) throws InvocationTargetException, InterruptedException {
+			Player random, Player ai){
 		throw new UnsupportedOperationException("There is no swing view");
 	}
 

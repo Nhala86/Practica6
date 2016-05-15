@@ -32,13 +32,21 @@ public class AdvancedTTTFactoryExt extends AdvancedTTTFactory {
 	}
 	
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
-		SwingUtilities.invokeAndWait(new Runnable() {
-			@Override
-			public void run() {
-				new AdvancedTTTSwingView(game, ctrl, viewPiece, randPlayer, aiPlayer);
-				}
-			});
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					new AdvancedTTTSwingView(game, ctrl, viewPiece, randPlayer, aiPlayer);
+					}
+				});
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

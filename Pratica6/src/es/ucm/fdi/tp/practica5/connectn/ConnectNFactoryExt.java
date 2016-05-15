@@ -40,14 +40,22 @@ public class ConnectNFactoryExt extends ConnectNFactory {
 	}
 
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer){
 	
-		SwingUtilities.invokeAndWait(new Runnable() {
-			@Override
-			public void run() {
-				new ConnectnSwingview(game, ctrl, viewPiece, randPlayer, aiPlayer);
-				}
-			});
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					new ConnectnSwingview(game, ctrl, viewPiece, randPlayer, aiPlayer);
+					}
+				});
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 

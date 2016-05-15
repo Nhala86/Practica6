@@ -27,6 +27,7 @@ import es.ucm.fdi.tp.basecode.minmax.MinMax;
 import es.ucm.fdi.tp.practica5.ataxx.AtaxxFactoryExt;
 import es.ucm.fdi.tp.practica5.connectn.ConnectNFactoryExt;
 import es.ucm.fdi.tp.practica5.ttt.TicTacToeFactoryExt;
+import es.ucm.fdi.tp.practica6.client.GameClient;
 import es.ucm.fdi.tp.practica6.server.GameServer;
 
 /**
@@ -1165,16 +1166,13 @@ public class Main {
 	 * para que los atributos tengan los valores correctos.
 	 * 
 	 */
-	private static void startServer() {
-		
-		GameServer c = new GameServer(gameFactory, pieces, serverPort); 
-			
+	private static void startServer() {		
+		GameServer c = new GameServer(gameFactory, pieces, serverPort); 			
 		try{
 			c.start();
 		}catch(Exception e){
 			System.err.println("Something goes wrong, the server can´t start");
-		}
-		
+		}		
 	}
 
 	/**
@@ -1189,15 +1187,15 @@ public class Main {
 	 * 
 	 */
 	private static void startClient() {
-		throw new UnsupportedOperationException("The client isn´t working yet");
-		/*
-		 * try{ GameClient c = new GameClient(serverHost, serverPort);
-		 * gameFactory = c.getGameFactory(); gameFactory.createSwingView(c, c,
-		 * c.getPlayerPiece(), gameFactory.createRandomPlayer(),
-		 * gameFactory.createAIPlayer(aiPlayerAlg)); c.start(); }catch(Exception
-		 * e){ System.err.println("Something goes wrong, the client can´t start"
-		 * ); }
-		 */
+		//throw new UnsupportedOperationException("The client isn´t working yet");
+		 try{ 
+			 GameClient c = new GameClient(serverHost, serverPort);
+			 gameFactory = c.getGameFactory(); 
+			 gameFactory.createSwingView(c, c, c.getPlayerPiece(), gameFactory.createRandomPlayer(), gameFactory.createAIPlayer(aiPlayerAlg));
+			 c.start(); 
+			 }catch(Exception e){ 
+				 System.err.println("Something goes wrong, the client can´t start");
+			 }		 
 	}
 
 // -------------------------------------------MAIN-----------------------------------------------//

@@ -98,7 +98,7 @@ public class AtaxxFactory implements GameFactory {
 	}
 
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer) throws InvocationTargetException, InterruptedException {
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer){
 		throw new UnsupportedOperationException("There is no swing view");
 	}
 
