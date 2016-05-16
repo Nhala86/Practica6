@@ -15,9 +15,8 @@ public class Connection {
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	
-	/**
-	 * <b>Connection</b>
-	 * <p> Constructor de clase connection almacenar los streams de entrada y salida en atributos</p>
+	/**	 
+	 * Constructor de clase connection almacenar los streams de entrada y salida en atributos
 	 * @param socket
 	 * @throws IOException
 	 */
@@ -27,35 +26,31 @@ public class Connection {
 		this.in = new ObjectInputStream(this.socket.getInputStream());
 	}
 	
-	/**
-	 * <b>sendObject</b>
-	 * <p>Procedimeinto de envio de objetos</p>
+	/**	
+	 * Procedimeinto de envio de objetos
 	 * @param r
 	 * @param piece 
 	 * @param gameFactory 
 	 * @throws IOException
 	 */
 	public void sendObject(Object r) throws IOException{
-		out.writeObject(r);
-		out.flush();
 		out.reset();
+		out.writeObject(r);
+		out.flush();		
 	}
 	
-	/**
-	 * <b>getObject</b>
-	 * <p>Procedimiento de recepcion de objetos</p>
+	/**	
+	 * Procedimiento de recepcion de objetos
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
 	public Object getObject() throws IOException, ClassNotFoundException{
-		return in.readObject();
-		
+		return in.readObject();		
 	}
 	
-	/**
-	 * <b>stop</b>
-	 * <p>Procedimiento de cierre de un canal de comunicacion</p>
+	/**	 
+	 * Procedimiento de cierre de un canal de comunicacion
 	 * @throws IOException
 	 */
 	public void stop() throws IOException{

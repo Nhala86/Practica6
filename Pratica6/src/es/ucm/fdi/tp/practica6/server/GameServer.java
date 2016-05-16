@@ -170,27 +170,7 @@ public class GameServer extends Controller implements GameObserver {
 		}catch(InvocationTargetException | InterruptedException e){
 			throw new GameError("Well, this is embarrassing, but something went wrong.");
 		}
-	}
-	/*
-	private void controlGUI(){
-		try{
-			this.log("Server started to listen clients");
-			Socket s = this.server.accept();
-			if(this.numOfConnectedPlayers >= this.numPlayers){
-				c.sendObject(new GameError("Maxium players connections reached"));
-				c.stop();
-				return;
-			}
-			else{}
-			c.sendObject("ok");
-			c.sendObject(this.gameFactory);
-			c.sendObject(this.pieces.get(numOfConnectedPlayers - 1));
-			if(this.numOfConnectedPlayers == this.numPlayers){
-				this.start();
-			}
-			startClientListener(c);				
-		}catch(IOException | ClassNotFoundException e){}
-	}*/
+	}	
 	
 	/**
 	 * <b>constructGraphicGUI</b>
@@ -312,6 +292,8 @@ public class GameServer extends Controller implements GameObserver {
 		 */
 		if(this.numOfConnectedPlayers > this.pieces.size()){
 			c.sendObject(new GameError("Maximum players connections reached"));
+			c.stop();
+			return;
 
 		}else{
 			/*
