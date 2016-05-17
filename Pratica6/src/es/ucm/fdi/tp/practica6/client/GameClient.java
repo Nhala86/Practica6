@@ -48,7 +48,7 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 		if(response instanceof Exception){
 			throw (IOException) response;			
 		}
-		else if((response instanceof String) && ((String)response).equalsIgnoreCase("ok")){
+		else if((response instanceof String) && ((String)response).equalsIgnoreCase("OK")){
 			try{
 				gameFactory = (GameFactory) connectioToServer.getObject();
 				localPiece = (Piece) connectioToServer.getObject();
@@ -56,7 +56,6 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 				throw new GameError("Unknown server response: " + e.getMessage()); 
 			}
 		}		
-		//this.observers.add(null);
 	}
 
 	@Override
@@ -103,8 +102,9 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 		}
 	}	
 	
-	public void star() throws ClassNotFoundException, IOException {
-		this.observers.add(null);
+	public void start(Player player) {
+	
+		this.observers.add((GameObserver) player);
 		gameOver = false;
 		while(!gameOver){
 			try{
@@ -112,9 +112,8 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 				for(GameObserver o : observers){
 					response.rum(o);
 				}
-			}catch(IOException | ClassNotFoundException e){}
-			
-		}
+			}catch(IOException | ClassNotFoundException e){}			
+		}		
 	}
 	
 }

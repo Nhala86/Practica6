@@ -6,153 +6,126 @@ import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.GameMove;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.practica4.ataxx.AtaxxMove;
 
-/**
- * A Class representing a move for Ataxx.
- * 
- * <p>
- * Clase para representar un movimiento del juego Ataxx.
- * 
- */
-
-public class AtaxxMove extends GameMove {
+public class AtaxxMove extends GameMove{
+	
+	/**
+	 * Fila en la que se coloca la ficha devuelta por
+	 * {@link GameMove#getPiece()}.
+	 */
+	protected int row;
 
 	/**
-	 * 
+	 * Columna en la que se coloca la ficha devuelta por
+	 * {@link GameMove#getPiece()}.
+	 */
+	protected int col;
+
+	/**
+	 * Fila de destino en la que se coloca la ficha una vez movida	
+	 */	
+	protected int filaDestino;
+	
+	/**
+	 * Columna de destino en la que se coloca la ficha una vez movida	 
+	 */
+	protected int columnaDestino;
+	
+	/**
+	 * Numero de serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The row where the piece is return return by {@link GameMove#getPiece()}.
-	 * <p>
-	 * Fila en la que se encuentra la ficha devuelta por
-	 * {@link GameMove#getPiece()}.
+	 * Constructora instanciada a vacio por defecto
 	 */
-	protected int originRow;
-
-	/**
-	 * The column where the piece is return by {@link GameMove#getPiece()}
-	 * .
-	 * <p>
-	 * Columna en la que se encuentra la ficha devuelta por
-	 * {@link GameMove#getPiece()}.
-	 */
-	protected int originCol;
-	/**
-	 * The row where to place the piece return by {@link GameMove#getPiece()}.
-	 * <p>
-	 * Fila en la que se coloca la ficha devuelta por
-	 * {@link GameMove#getPiece()}.
-	 */
-	protected int destinyRow;
-
-	/**
-	 * The column where to place the piece return by {@link GameMove#getPiece()}
-	 * .
-	 * <p>
-	 * Columna en la que se coloca la ficha devuelta por
-	 * {@link GameMove#getPiece()}.
-	 */
-	protected int destinyCol;
-
-	/**
-	 * This constructor should be used ONLY to get an instance of
-	 * {@link AtaxxMove} to generate game moves from strings by calling
-	 * {fromString(String)}
-	 * 
-	 * <p>
-	 * Solo se debe usar este constructor para obtener objetos de
-	 * {@link AtaxxMove} para generar movimientos a partir de strings usando
-	 * el metodo {fromString(String)}
-	 * 
-	 */
-
-	public AtaxxMove() {
+	public AtaxxMove(){
+		
 	}
-
-	/**
-	 * Constructs a move for placing a piece of the type referenced by {@code p}
-	 * at position ({@code row},{@code col}).
-	 * 
-	 * <p>
-	 * Construye un movimiento para colocar una ficha del tipo referenciado por
-	 * {@code p} en la posicion ({@code row},{@code col}).
-	 * 
-	 * @param originRow
-	 *            Number of origin row.
-	 *            <p>
-	 *            Numero de origen fila.
-	 * @param originCol
-	 *            Number of origin column.
-	 *            <p>
-	 *            Numero de origen columna.
-	 * @param destinyRow
-	 *            Number of destiny row.
-	 *            <p>
-	 *            Numero de destino fila.
-	 * @param destinyCol
-	 *            Number of destiny column.
-	 *            <p>
-	 *            Numero de destino columna.
-	 * @param p
-	 *            A piece to be place at ({@code row},{@code col}).
-	 *            <p>
-	 *            Ficha a colocar en ({@code row},{@code col}).
-	 */
-	public AtaxxMove(int originRow, int originCol, int destinyRow, int destinyCol, Piece p) {
-		super(p);
-		this.originRow = originRow;
-		this.originCol = originCol;
-		this.destinyRow = destinyRow;
-		this.destinyCol = destinyCol;
+	 /**
+	  * Constructora a la que se le pasa los parametros de las filas, columnas y ficha
+	  * @param row valor entero de la fila en la que se encuentra la ficha antes de moverse
+	  * @param col valor entero de la columna en la que se encuentra la ficha antes de moverse
+	  * @param filaDestino valor entero de la fila en la que se encuentra la ficha despues de ser movida
+	  * @param columnaDestino valor entero de la columna en la que se encuentra la ficha despues de ser movida
+	  * @param p ficha que se le pasa por parametros
+	  */
+	public AtaxxMove(int row, int col, int filaDestino, int columnaDestino, Piece p){
+			super(p);
+			this.row = row;
+			this.col = col;
+			this.filaDestino = filaDestino;
+			this.columnaDestino = columnaDestino;
 	}
+	
 	@Override
 	public void execute(Board board, List<Piece> pieces) {
-			Piece p = getPiece();
-			int distance = Math.max(Math.abs(this.originRow - this.destinyRow), Math.abs(this.originCol - this.destinyCol));
-			this.checkMove(board, p, distance);
-	
-				if(distance == 1){
-					board.setPosition(this.destinyRow, this.destinyCol, p);
-					board.setPieceCount(p, board.getPieceCount(p) + 1);
-				}
-				else if(distance == 2){
-					board.setPosition(this.destinyRow, this.destinyCol, p);
-					board.setPosition(this.originRow, this.originCol, null);
-				}
-			this.convertPiecesArround(board, pieces, p);
+		Piece piece = getPiece();		
+		int distancia = Math.max(Math.abs(this.row - this.filaDestino), Math.abs(this.col - this.columnaDestino));
+		
+		if (board.getPosition(this.row, this.col) == null) {
+			throw new GameError("position (" + this.row + "," + this.col + ") is void!");
+		} 
+		else if (board.getPosition(this.filaDestino, this.columnaDestino ) != null) {
+			throw new GameError("position (" + this.filaDestino + "," + this.columnaDestino + ") is already occupied!");
+		}
+		else if(!board.getPosition(this.row, this.col).equals(piece)){
+			throw new GameError("La pieza en (" + this.row + "," + this.col + ") es de otro jugador");
+		}
+		else if(distancia > 2){
+			throw new GameError("La posicion (" + this.filaDestino + "," + this.columnaDestino + ")es mayor que 2");
+		}
+		/*
+		 * no usar los métodos de piece-count, es para juegos que tienen limite
+		 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+		 */
+		//else if(board.getPieceCount(piece) <= 0){
+		else if(AtaxxRules.contarFichasTablero(board, piece) <= 0){
+			throw new GameError("La ficha del tipo " + piece + "no es valida");
+		}
+		else if(distancia == 0){
+			throw new GameError("La ficha " + piece + "no se puede mover a su posicion de origen");
+		}
+		
+		if(distancia == 1){
+			board.setPosition(this.filaDestino, this.columnaDestino, piece);
+			/*
+			 * no usar los métodos de piece-count, es para juegos que tienen limite
+			 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+			 */
+			//board.setPieceCount(piece, board.getPieceCount(piece)+ 1);
+		}
+		else if(distancia == 2){
+			board.setPosition(this.filaDestino, this.columnaDestino, piece);
+			board.setPosition(this.row, this.col, null);
+		}
+		this.convertirFichas(board, pieces, piece);
 	}
-
-	
-	private void checkMove(Board board, Piece p, int distance) throws GameError{
 		
-		if (board.getPieceCount(p) <= 0)
-			throw new GameError("There are no pieces of type " + p + " available");
-		else if (board.getPosition(this.originRow, this.originCol) == null) 
-			throw new GameError("Position (" + this.originRow + "," + this.originCol + ") there is not piece there.");
-		else if (board.getPosition(this.destinyRow, this.destinyCol) != null) 
-			throw new GameError("Position (" + this.destinyRow + "," + this.destinyCol + ") is already occupied");
-		else if(board.getPosition(this.originRow, this.originCol) != p)
-			throw new GameError("Position (" + this.originRow + "," + this.originCol + ") is a piece from other player!!");
-		else if(distance > 2)
-			throw new GameError("Position (" + this.destinyRow + "," + this.destinyCol + ") distance is larger than 2 from the origin");
-	}
-		
-	private void convertPiecesArround(Board board, List<Piece> pieces, Piece piece){
-		
-		int rows = board.getRows();
-		int cols = board.getCols();
-			 
-		for(int r = Math.max(this.destinyRow - 1, 0); r <= Math.min(this.destinyRow + 1, rows - 1); r++) 
-			for (int c = Math.max(this.destinyCol - 1, 0); c <= Math.min(this.destinyCol + 1, cols - 1); c++) 
-				if(board.getPosition(r, c) != null  && pieces.contains(board.getPosition(r, c))){
-					if(piece.getId() != board.getPosition(r, c).getId() ){
-						board.setPieceCount(board.getPosition(r, c), board.getPieceCount(board.getPosition(r, c)) - 1);
-						board.setPieceCount(piece, board.getPieceCount(piece) + 1);
-						board.setPosition(r, c, piece);
-						}
+	/**
+	 * Metodo que convierte a las fichas de alrededor
+	 * @param tablero se le pasa el tablero del juego
+	 * @param pieces la lista de fichas
+	 * @param ficha la ficha del jugador
+	 */
+	private void convertirFichas(Board tablero, List<Piece> pieces, Piece ficha){
+		//row = tablero.getRows(); // int row Demasiadas variables
+		//col = tablero.getCols(); // int col Demasiadas variables
+		for(int f = Math.max(this.filaDestino - 1, 0); f <= Math.min(this.filaDestino + 1, tablero.getRows() -1); f++){
+			for(int c = Math.max(this.columnaDestino - 1, 0); c <= Math.min(this.columnaDestino + 1, tablero.getCols() -1); c++){
+				if(tablero.getPosition(f, c) != null && pieces.contains(tablero.getPosition(f, c))){ // ya recorre la lista para ver que no esta en ella el obstaculo
+					if(ficha.getId() != tablero.getPosition(f, c).getId()){
+						/*
+						 * no usar los métodos de piece-count, es para juegos que tienen limite
+						 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+						 */
+						///tablero.setPieceCount(tablero.getPosition(f, c), tablero.getPieceCount(tablero.getPosition(f, c))- 1);
+						//tablero.setPieceCount(ficha, tablero.getPieceCount(ficha) + 1);
+						tablero.setPosition(f, c, ficha);
 					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -161,45 +134,34 @@ public class AtaxxMove extends GameMove {
 		if (words.length != 4) {
 			return null;
 		}
-
 		try {
-			int originRow, originCol, destinyRow, destinyCol;
-			originRow = Integer.parseInt(words[0]);
-			originCol = Integer.parseInt(words[1]);
-			destinyRow = Integer.parseInt(words[2]);
-			destinyCol = Integer.parseInt(words[3]);
-			return createMove(originRow, originCol, destinyRow, destinyCol, p);
+			//int row, col, filaDestino, columnaDestino; // Demasiadas variables
+			//row = Integer.parseInt(words[0]);
+			//col = Integer.parseInt(words[1]);
+			//filaDestino = Integer.parseInt(words[2]);
+			//columnaDestino = Integer.parseInt(words[3]);
+			return createMove(Integer.parseInt(words[0]), Integer.parseInt(words[1]), Integer.parseInt(words[2]), Integer.parseInt(words[3]), p);
 		} catch (NumberFormatException e) {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Creates a move that is called from {@link #fromString(Piece, String)}.
-	 * Separating it from that method allows us to use this class for other
-	 * similar games by overriding this method.
-	 * 
-	 * <p>
-	 * Crea un nuevo movimiento con la misma ficha utilizada en el movimiento
-	 * actual. Llamado desde {@link #fromString(Piece, String)}; se separa este
-	 * metodo del anterior para permitir utilizar esta clase para otros juegos
-	 * similares sobrescribiendo este metodo.
-	 * 
-	 * @param row
-	 *            Row of the move being created.
-	 *            <p>
-	 *            Fila del nuevo movimiento.
-	 * 
-	 * @param col
-	 *            Column of the move being created.
-	 *            <p>
-	 *            Columna del nuevo movimiento.
+	 * Metodo creador de movimiento que llama a la constructora de AtaxxMove
+	 * @param row valor entero de la fila en la que se encuentra la ficha antes de moverse
+	 * @param col valor entero de la columna en la que se encuentra la ficha antes de moverse
+	 * @param filaDestino valor entero de la fila en la que se encuentra la ficha despues de ser movida
+	 * @param columnaDestino valor entero de la columna en la que se encuentra la ficha despues de ser movida
+	 * @param p ficha que se le pasa por parametros
+	 * @return movimiento con los parametros de filas, columnas y ficha
 	 */
-	protected GameMove createMove(int originRow, int originCol, int destinyRow, int destinyCol, Piece p) {
-		return new AtaxxMove(originRow, originCol, destinyRow, destinyCol, p);
+	protected GameMove createMove(int row, int col, int filaDestino, int columnaDestino, Piece p) {
+		return new AtaxxMove(row, col, filaDestino, columnaDestino, p);
 	}
+
 	@Override
 	public String help() {
-		return "'originRow originCol destinyRow destinyCol', to place/create a piece at the corresponding position.";
+		return "'row column', to place a piece at the corresponding position.";
 	}
+
 }

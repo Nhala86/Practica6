@@ -1,6 +1,5 @@
 package es.ucm.fdi.tp.practica4.ataxx;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,52 +17,59 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameRules;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.basecode.bgame.views.GenericConsoleView;
-import es.ucm.fdi.tp.practica4.ataxx.AtaxxMove;
-import es.ucm.fdi.tp.practica4.ataxx.AtaxxRandomPlayer;
 
 public class AtaxxFactory implements GameFactory {
+	private int dim;
+	private int obstaculo;
 	
 	/**
-	 * 
+	 * Metodo constructor sin parametros de entrada,
+	 * que iguala la dimension a 5 y los obstaculos a 0 por defecto.  
 	 */
-	private static final long serialVersionUID = 1L;
-	private int dimension;
-	private int obstacles;
-	
-	
-	
 	public AtaxxFactory(){
-		this.dimension = 5;
-		this.obstacles = 0;
+		this.dim = 5;
+		this.obstaculo = 0;
+		
 	}
 	
-	public AtaxxFactory(int dimension){
-		if(dimension < 5){
-			throw new GameError("Dimension must be at least 5 :" + dimension);
-		}
-		this.dimension = dimension;
-		this.obstacles = 0;
-	}
-	
-	
-	public AtaxxFactory(int dimension, int obstacles){
-		if(dimension < 5){
-			throw new GameError("Dimension must be at least 5 :" + dimension);
+	/**
+	 * Constructora que recibe el parametro de entrada de la dimension del tablero.
+	 * Si la dimension es menor que 5, devuelve un mensaje de error
+	 * @param dim valor entero positivo de la dimension del tablero
+	 */
+	public AtaxxFactory(int dim){
+		if(dim < 5){
+			throw new GameError("La dimension debe ser mayor o igual que 5. PARAMETRO:" + dim);
 		}
 		else{
-			if(obstacles > (dimension * dimension)- 8){
-				throw new GameError("Obstacles must be less than " + dimension * dimension);
+			this.dim = dim;
+			this.obstaculo = 0;
+		}
+	}
+	
+	/**
+	 * Constructora que recibe los parametro de entrada de dimension y obstaculos del juego
+	 * @param dim valor entero positivo de la dimension del tablero
+	 * @param obstaculo valor entero positivo del la cantidad de obstaculos que hay en el tablero
+	 */
+	public AtaxxFactory(int dim, int obstaculo){
+		if(dim < 5){
+			throw new GameError("La dimension debe ser mayor o igual que 5. PARAMETRO:" + dim);
+		}
+		else{
+			if(obstaculo > (dim * dim) / 10){
+				throw new GameError("El numero de obstaculos deben ser menor que el 10 % de la superficie. PARAMETRO: " + obstaculo);
 			}
 			else{
-				this.dimension = dimension;
-				this.obstacles = obstacles;
+				this.dim = dim;
+				this.obstaculo = obstaculo;
 			}
 		}
 	}
 
 	@Override
 	public GameRules gameRules() {
-		return new AtaxxRules(this.dimension , this.obstacles);
+		return new AtaxxRules(this.dim, this.obstaculo);
 	}
 
 	@Override
@@ -94,12 +100,14 @@ public class AtaxxFactory implements GameFactory {
 	@Override
 	public void createConsoleView(Observable<GameObserver> game, Controller ctrl) {
 		new GenericConsoleView(game, ctrl);
-
+		
 	}
 
 	@Override
-	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer, Player aiPlayer){
+	public void createSwingView(Observable<GameObserver> game, Controller ctrl, Piece viewPiece, Player randPlayer,
+			Player aiPlayer) {
 		throw new UnsupportedOperationException("There is no swing view");
+		
 	}
 
 }

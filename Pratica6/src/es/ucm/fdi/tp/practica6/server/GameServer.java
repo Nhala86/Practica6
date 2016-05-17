@@ -12,6 +12,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -148,7 +150,12 @@ public class GameServer extends Controller implements GameObserver {
 	public void start() {
 		controlGUI();
 		try {
-			startServer();
+			try {
+				startServer();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			this.log("Error starting a client connection: " + e.getMessage());
 		}
@@ -247,7 +254,7 @@ public class GameServer extends Controller implements GameObserver {
 	 * <p>Procedimiento de inicializacion de servidor</p>
 	 * @throws IOException caused by {@link stopped} value in false
 	 */
-	private void startServer() throws IOException {
+	private void startServer() throws IOException, ClassNotFoundException {
 		this.server = new ServerSocket(port);
 		this.stopped = false;
 		
@@ -261,10 +268,10 @@ public class GameServer extends Controller implements GameObserver {
 				Socket s = this.server.accept();
 				
 				//log a corresponding message
-				this.log("client trying to connect from port " + s.getPort());
+				this.log("client trying to connect from port " + port);
 				//call handleRequest(s) to handle the request
-				this.handleRequest(s);
-			}catch(IOException | ClassNotFoundException e ){
+				this.handleRequestInThread(s);
+			}catch(IOException e ){
 				if (!this.stopped)
 					this.log("Error while waiting for a connection: " + e.getMessage());
 			}
@@ -315,7 +322,7 @@ public class GameServer extends Controller implements GameObserver {
 		/*
 		 * Si se cumple con el numero de jugadores se inicia la partida
 		 */
-		if(this.numOfConnectedPlayers==this.numPlayers){
+		if(this.numOfConnectedPlayers == this.numPlayers){
 			this.start();
 		}
 		
@@ -325,6 +332,37 @@ public class GameServer extends Controller implements GameObserver {
 		 */
 		startClientListener(c);
 		}catch(IOException | ClassNotFoundException _e){}
+	}
+	
+	Executor exec = Executors.newCachedThreadPool();
+	
+	public void handleRequestInThread(Socket s){
+		exec.execute(new Runnable(){
+
+			@Override
+			public void run() {
+				try{
+					try {
+						handleRequest(s);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}					
+				}catch(IOException e){}
+				
+			}			
+		});
+			/*public void run(){
+				try{
+					try {
+						handleRequest(s);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}catch(IOException e){}
+			}
+		}.start();*/
 	}
 
 	/**

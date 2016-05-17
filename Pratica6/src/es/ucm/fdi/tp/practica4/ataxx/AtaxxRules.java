@@ -6,181 +6,126 @@ import java.util.List;
 import es.ucm.fdi.tp.basecode.bgame.Utils;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.FiniteRectBoard;
-import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.GameMove;
 import es.ucm.fdi.tp.basecode.bgame.model.GameRules;
 import es.ucm.fdi.tp.basecode.bgame.model.Pair;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-
-
-/**
- * Rules for Ataxx game.
- * <ul>
- * <li>The game is played on an NxN board (with N>=5 and odd).</li>
- * <li>The number of players is between 2 and 4.</li>
- * <li>The player turn in the given order, each placing two pieces on the
- * symmetrical corners of the boards (2 players) and on the symmetrical 
- * middles of the borders(4 players). The winner is the one who have 
- * the biggest number of pieces of their own color whenever the board is full or
- * anyone cannot move.</li>
- * </ul>
- * 
- * <p>
- * Reglas del juego Ataxx.
- * <ul>
- * <li>El juego se juega en un tablero NxN (con N>=5 e impar).</li>
- * <li>El numero de jugadores esta entre 2 y 4.</li>
- * <li>Los jugadores juegan en el orden proporcionado, cada uno colocando dos
- * ficha en las esquinas simetricas del tablero(2 jugadores) y las medianas 
- * del borde del tablero(4 jugadres). El ganador es el jugador que consiga 
- * el mayor numero de fichas de su color cuando el tablero este lleno 
- * o ningun jugador pueda moverse.</li>
- * </ul>
- *
- */
-public class AtaxxRules implements GameRules {
-	
-	private int dimension;
-	private int obstacles;
-	private final Piece obstacle = new Piece("+");
-	
-	
+public class AtaxxRules implements GameRules{
+	private int dim;
+	private int obstaculo;
+	private Piece Obstaculo = new Piece("*"); //Por Defecto sera asterisco salvo equivalencias
 	
 	/**
-	 * This constructor should be used ONLY to get an instance of
-	 * {@link AtaxxFactory} to generate a game play from the 
-	 * attributes in the command line
-	 * 
-	 * <p>
-	 * Solo se debe usar este constructor para obtener objetos de
-	 * {@link AtaxxFactory} para generar juegos a partir de los parametros
-	 * entregados en los argumentos.
-	 * 
-	 * @param dimension paramtro de la longitud del tablero
-	 * @param obstacles parametro con el numero de obstaculos a generar en el tablero
+	 * Constructora a la que se le pasa el parametro de entrada de dimension del tablero
+	 * @param dim valor entero positivo de la dimension del tablero
 	 */
-
-	public AtaxxRules(int dimension, int obstacles){
-		if(dimension < 5){
-			throw new GameError("Dimension must be at least 5 :" + dimension);
+	public AtaxxRules(int dim){
+		if(dim < 5){
+			throw new GameError("La dimension debe ser mayor o igual que 5. PARAMETRO: " + dim);
 		}
 		else{
-			if(obstacles > (dimension * dimension)- 8){
-				throw new GameError("Obstacles must be less than " + dimension * dimension);
-			}
-			else{
-				this.dimension = dimension;
-				this.obstacles = obstacles;
-			}
+			this.dim = dim;
+			this.obstaculo = 0;
 		}
 	}
+	
 	/**
-	 * This constructor should be used ONLY to get an instance of
-	 * {@link AtaxxFactory} to generate a game play from the 
-	 * attributes in the command line
-	 * 
-	 * <p>
-	 * Solo se debe usar este constructor para obtener objetos de
-	 * {@link AtaxxFactory} para generar juegos a partir de los parametros
-	 * entregados en los argumentos.
-	 * 
-	 * @param dimension paramtro de la longitud del tablero
+	 * Constructora a la que se le pasa el parametro de entrada de dimension y obstaculos del tablero
+	 * @param dim valor entero positivo de la dimension del tablero
+	 * @param obstaculo valor entero de la cantidad de obstaculos que hay en el tablero
 	 */
-	public AtaxxRules(int dimension){
-		if(dimension < 5){
-			throw new GameError("Dimension must be at least 5 :" + dimension);
+	public AtaxxRules(int dim, int obstaculo){
+		if(dim < 5)
+			throw new GameError("La dimension debe ser mayor o igual que 5. PARAMETRO: " + dim);
+		else{
+			if(obstaculo > (dim * dim / 10)){ //Sería mejor exigir que el número de obstáculos no supera, por ejemplo, el 10% del tablero
+				throw new GameError("El numero de obstaculos deben ser menor que el 10 % de la superficie. PARAMETRO: " + obstaculo);
+			}
+			this.dim = dim;
+			this.obstaculo = obstaculo;
 		}
-		this.dimension = dimension;
-		this.obstacles = 0;
 	}
-
+	
+	/**
+	 * Metodo que comprueba si algun jugador tiene ese tipo de ficha
+	 * @param pieces lista de fichas de los jugadores en el tablero
+	 * @return una ficha
+	 */
+	private Piece getObstPiece(List<Piece> pieces) {
+		int i = 0;
+		while ( true ) {
+		Piece piece = new Piece("*#"+i);
+		if ( !pieces.contains(piece) ) 
+			/*
+			 * para obstáculos no puedes usar simplemente e"*", hay que comprobar
+			 *  que no hay un jugador con la misma ficha.
+			 */
+		  return piece;
+		  i++;
+		}
+	}
 	
 	@Override
 	public String gameDesc() {
-		return "Ataxx " + this.dimension + "X" + this.dimension;
+		return "Bienvenido a Ataxx con un tablero " + this.dim + "X" + this.dim;
 	}
 
 	@Override
 	public Board createBoard(List<Piece> pieces) {
-		Board board = new  FiniteRectBoard(this.dimension, this.dimension);
-			
+		Board tablero = new FiniteRectBoard(dim, dim);
+		
 		Piece p1 = pieces.get(0);
-		board.setPosition(0, 0, p1);
-		board.setPosition(symmetrical(0), symmetrical(0), p1);
-		board.setPieceCount(p1, 2);
+		tablero.setPosition(0, 0, p1);
+		tablero.setPosition(this.dim-1, this.dim-1, p1);
+		/*
+		 * no usar los métodos de piece-count, es para juegos que tienen limite
+		 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+		 */
+		//tablero.setPieceCount(p1, 2);
 		
 		Piece p2 = pieces.get(1);
-		board.setPosition(0, this.dimension - 1, p2);
-		board.setPosition(symmetrical(0), symmetrical(this.dimension - 1), p2);
-		board.setPieceCount(p2, 2);
+		tablero.setPosition(0, this.dim-1, p2);
+		tablero.setPosition(this.dim-1, 0, p2);
+		/*
+		 * no usar los métodos de piece-count, es para juegos que tienen limite
+		 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+		 */
+		//tablero.setPieceCount(p2, 2);
 		
-		if(pieces.size() > 2){
+		if(pieces.size()> 2){
 			Piece p3 = pieces.get(2);
-			board.setPosition(0, this.dimension / 2, p3);
-			board.setPosition(symmetrical(0), symmetrical(this.dimension /2), p3);
-			board.setPieceCount(p3, 2);
-			
-			if(pieces.size() > 3){
+			tablero.setPosition(0, this.dim/2, p3);
+			tablero.setPosition(this.dim-1, this.dim/2, p3);
+			/*
+			 * no usar los métodos de piece-count, es para juegos que tienen limite
+			 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+			 */
+			//tablero.setPieceCount(p3, 2);
+			if(pieces.size()> 3){
 				Piece p4 = pieces.get(3);
-				board.setPosition(this.dimension / 2, 0, p4);
-				board.setPosition(symmetrical(this.dimension / 2), symmetrical(0), p4);
-				board.setPieceCount(p4, 2);
+				tablero.setPosition(this.dim/2, 0, p4);
+				tablero.setPosition(this.dim/2, this.dim-1, p4);
+				/*
+				 * no usar los métodos de piece-count, es para juegos que tienen limite
+				 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+				 */
+				//tablero.setPieceCount(p4, 2);
 			}
+			
+			
 		}
-		if(this.obstacles > 0)
-			fillOfObstacles(board);
-		
-		return board;
-	}
-	
-	/**
-	 * Metodo que resuelve el valor simetrico central de un valor dado respecto del tablero.
-	 * 
-	 * @param origin es una variable de coordenada de una posicion del tablero
-	 * @return el valor simetrico central respecto de el centrol del tablero de dimension impar.
-	 */
-	private int symmetrical(int origin){
-
-		int symmetrical;
-		int middle = this.dimension/2;
-		if(origin > middle)
-			symmetrical = Math.abs((origin-middle)- middle);
-		else if(origin < middle)
-			symmetrical =(Math.abs(origin-middle) + middle);
-		else
-			symmetrical = origin;
-		return symmetrical;
-	}
-	/**
-	 * Procedimiento que coloca de manera aleatoria los obstaculos definidos en el atributo de 
-	 * la clase AttaxRules. La colocacion de obstaculos se realiza de manera simetrica central
-	 * respecto de la posicion central para un tablero regular.
-	 * 
-	 * @param board tablero sobre el que se han de colocar los obstaculos.
-	 */
-	private void fillOfObstacles(Board board){
-		int r, c;
-		int counter = this.obstacles;
-		if(counter % 2 != 0){
-			board.setPosition(this.dimension/2, this.dimension/2, this.obstacle);
-			counter--;
+		if(this.obstaculo > 0){
+			this.Obstaculo = getObstPiece(pieces); 
+			PonerObstaculos(tablero);
 		}
-		while(counter != 0){
-			r = Utils.randomInt(this.dimension);
-			c = Utils.randomInt(this.dimension);
-			if(board.getPosition(r, c) == null){
-				board.setPosition(r, c, this.obstacle);
-				board.setPosition(symmetrical(r),symmetrical(c), this.obstacle);
-				counter = counter - 2;
-			}
-		}
+		return tablero;
 	}
-	
 
 	@Override
-	public Piece initialPlayer(Board board, List<Piece> pieces) {
+	public Piece initialPlayer(Board board, List<Piece> pieces) {	
 		return pieces.get(0);
 	}
 
@@ -195,123 +140,166 @@ public class AtaxxRules implements GameRules {
 	}
 
 	@Override
-	public Pair<State, Piece> updateState(Board board, List<Piece> pieces, Piece turn) {
-		Pair<State, Piece> result = new Pair<State, Piece>(State.InPlay, null) ;
-		
+	public Pair<State, Piece> updateState(Board board, List<Piece> pieces, Piece turn) {		
+		Pair<State, Piece> resultado = new Pair<State, Piece>(State.InPlay, null);
 		if(board.isFull()){
-			result = returnResult(board, pieces, turn);
+			resultado = resultado(board, pieces, turn);
 		}
-		else if(this.nextPlayer(board, pieces, turn).equals(turn)){
-			if(this.allPlayersBlocked(board, pieces))
-				result = returnResult(board, pieces, turn);
+		else{
+			if(turn.equals(this.nextPlayer(board, pieces, turn))){
+				if(this.bloqueoResuelto(board, pieces)){
+					resultado = resultado(board, pieces, turn);
+				}
+			}
 		}
-		return result;
-	}
-	/**
-	 * Metodo que determina si todos los jugadores de la partida excepto uno se han quedado sin fichas
-	 * 
-	 * @param board tablero donde se desarrolla la partida
-	 * @param pieces lista de piezas de los jugadores
-	 * @return
-	 */
-	protected boolean allPlayersBlocked(Board board, List<Piece> pieces){
-		boolean blocked = false;
-		int counter = 0;
-		
-		for(int i = 0; i < pieces.size(); i++){
-			if(this.validMoves(board, pieces, pieces.get(i)).size() <= 0)
-				counter++;
-		}
-		if(counter == pieces.size() - 1)
-			blocked = true;
-		return blocked;
+		return resultado;
 	}
 	
 	/**
-	 * Resulve el final de una partida indicando el jugador ganador y el numero de piezas
-	 * @param board tablero donde se desarrolla la partida
-	 * @param pieces lista de tipos de piezas de los jugadores
-	 * @param turn pieza a la que le corresponde el turno actual
-	 * @return Pair<State, Piece> con el estado final de la aprtida y el jugador correspondiente.
+	 * Metodo que evita que la partida se bloque porque ningun jugador puede mover sus fichas
+	 * @param board parametro que le pasa el tablero con su dimension
+	 * @param pieces parametro de fichas de los jugadores del juego
+	 * @return True si el numero de movimientos posibles es 0. False si hay movimientos posibles
 	 */
-	private Pair<State, Piece> returnResult(Board board, List<Piece> pieces, Piece turn){
-		
-		State game=State.InPlay;
-		Piece piece = null;
-		int higerValue = 0;
-		int[] playersScore = new int[pieces.size()];
-		
+	private boolean bloqueoResuelto(Board board, List<Piece> pieces) {
+		boolean Ok = false;
+		int contador = 0;
 		for(int i = 0; i < pieces.size(); i++){
-			playersScore[i] = board.getPieceCount(pieces.get(i));
-			if(higerValue == playersScore[i]){
-				game = State.Draw;
-				
-			}
-			else if(higerValue < playersScore[i]){
-				higerValue = playersScore[i];
-				piece = pieces.get(i);
-				game = State.Won;
+			if(this.validMoves(board, pieces, pieces.get(i)).size() <= 0){
+				contador++;
 			}
 		}
-		Pair<State, Piece> result = new Pair<State, Piece>(game, piece);
-		
-		return result;
-	}
+		if(contador == pieces.size() - 1){
+			Ok = true;
+		}
+		return Ok;
+	}	
 
+	/**
+	 * Metodo que crea los obstaculos en el tablero
+	 * @param tablero del juego con dimension * dimension
+	 */
+	private void PonerObstaculos(Board tablero){
+		int cont = this.obstaculo;
+		int f, c;
+		while(cont > 0){
+			f = Utils.randomInt(this.dim);
+			c = Utils.randomInt(this.dim);
+			if(tablero.getPosition(f, c) == null){
+				tablero.setPosition(f, c, this.Obstaculo);
+				cont--;
+			}
+		}		
+	}
+	
 	@Override
 	public Piece nextPlayer(Board board, List<Piece> pieces, Piece turn) {
-		Piece piece;
-		int numPlayers = pieces.size();
-		int i = pieces.indexOf(turn);
-		int cantidad, counter = 1;
-
+		Piece ficha;
+		int x = pieces.indexOf(turn);
+		int valor, contador = 1;
+		int numeroJugadores = pieces.size();
+		
 		do{
-			piece	= pieces.get((i + counter) % numPlayers);
-			cantidad = this.validMoves(board, pieces, piece).size();
-			counter++;
-		}while(cantidad <= 0 && counter <= numPlayers);
-
-		return piece;
+			ficha = pieces.get((x + contador)% numeroJugadores);
+			valor = this.validMoves(board, pieces, ficha).size();
+			contador++;
+		}while(valor <= 0 && contador <= numeroJugadores);	
+		
+		if(contador > numeroJugadores) //nextPlayer tiene que devolver null si ninguno puede mover.
+			ficha = null;
+		return ficha;		
 	}
 
+	
+
 	@Override
-	public List<GameMove> validMoves(Board board, List<Piece> playersPieces, Piece turn) {
-		Piece piece = turn;
-		List<GameMove> validMoves = new ArrayList<GameMove>();
-		for(int r= 0; r < board.getRows(); r++)
+	public List<GameMove> validMoves(Board board, List<Piece> playersPieces, Piece turn) {		
+		List<GameMove> movimientoValido = new ArrayList<GameMove>();
+		for(int f = 0; f < board.getRows(); f++){
 			for(int c = 0; c < board.getCols(); c++){
-				if(board.getPosition(r, c) == piece){
-					validMoves.addAll(validMoveOfPiece(board, turn, r, c));
+				Piece ficha = turn;
+				if(ficha.equals(board.getPosition(f, c))){
+					movimientoValido.addAll(MovimientoFichaValido(board, turn, f, c));
 				}
 			}
-		return validMoves;
+		}
+		return movimientoValido;
 	}
 	
 	/**
-	 * Establece una lista de posibles movimientos de una pieza en una posicion especifica del tablero
-	 * @param board tablero donde se ubica la pieza
-	 * @param piece pieza sobre la que se desean consultar los posibles movimientos
-	 * @param row fila de la ubicacion de la ficha consultada
-	 * @param col columna de la ubicacion de la ficha consultada
-	 * @return
+	 * Metodo que comprueba que el movimiento de la ficha sea correcto
+	 * @param tablero de dimension NxN
+	 * @param ficha que se juega en ese turno
+	 * @param row valor entero positivo de fila
+	 * @param col valor entero positivo de columna
+	 * @return un movimiento valido
 	 */
-	protected List<GameMove> validMoveOfPiece(Board board, Piece piece, int row, int col){
-		
-		int rows = board.getRows();
-		int cols = board.getCols();
-		
-		List<GameMove> validMoves = new ArrayList<GameMove>();
-		for(int r = Math.max(row - 2, 0); r <= Math.min(row + 2, rows - 1); r++) 
-			for (int c = Math.max(col - 2, 0); c <= Math.min(col + 2, cols - 1); c++)
-				if(board.getPosition(r, c) == null){
-					validMoves.add(new AtaxxMove(row, col,r,c, piece));
+	private List<GameMove> MovimientoFichaValido(Board tablero, Piece ficha, int row, int col) {
+		int fila = tablero.getRows();
+		int columna = tablero.getCols();
+		List<GameMove> movimientoValido = new ArrayList<GameMove>();
+		for(int f = Math.max(row - 2, 0); f <= Math.min(row + 2, fila - 1); f++){
+			for(int c = Math.max(col - 2, 0); c <= Math.min(col + 2, columna - 1); c++){
+				if(tablero.getPosition(f, c) == null){
+					movimientoValido.add(new AtaxxMove(row, col, f, c, ficha));
 				}
-		return validMoves;
-		
+			}
+		}
+		return movimientoValido;
 	}
+	 /**
+	  * Metodo que devuelve el estado del tablero cuando ya no hay más movimientos 
+	  * @param tablero parametro de Board que le pasa el tablero
+	  * @param pieces parametro de Pieces que le pasa una piece
+	  * @param ficha parametro de Piece que le pasa una ficha
+	  * @return el estado de un jugador al terminar la partida
+	  */
+	private Pair<State, Piece> resultado(Board tablero, List<Piece> pieces, Piece ficha){
+		State juego = State.InPlay;
+		Piece jugador = null;
+		int[] jugadorEnJuego = new int[pieces.size()];
+		int valorAlto = 0;
+		
+		for(int i = 0; i < pieces.size(); i++){
+			/*
+			 * no usar los métodos de piece-count, es para juegos que tienen limite
+			 * de fichas. Cuando necesitas el número de fichas cuéntalas.
+			 * jugadorEnJuego[i] = tablero.getPieceCount(pieces.get(i));
+			 */
+			jugadorEnJuego[i] = contarFichasTablero(tablero, pieces.get(i));
+			if(valorAlto == jugadorEnJuego[i]){
+				juego = State.Draw;
+			}
+			else if(valorAlto < jugadorEnJuego[i]){
+				valorAlto = jugadorEnJuego[i];
+				jugador = pieces.get(i);
+				juego = State.Won;
+				}
+		}		
+		Pair<State, Piece> resultado = new Pair <State, Piece>(juego, jugador);
+		return resultado;
+	}
+	
+	/**
+	 * Metodo que cuenta las fichas del tablero
+	 * @param tablero con la dimension que tiene
+	 * @param turn la ficha de un jugador
+	 * @return n contador de fichas
+	 */
+	public static final int contarFichasTablero(Board tablero, Piece turn){
+		int n = 0;
+		for(int i= 0; i < tablero.getRows(); i++)
+			for(int j= 0; j < tablero.getCols(); j++){
+				if(turn.equals(tablero.getPosition(i, j))){
+					n++;
+				}
+			}
+		return n;
+	}
+
 	@Override
 	public double evaluate(Board board, List<Piece> pieces, Piece turn, Piece p) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

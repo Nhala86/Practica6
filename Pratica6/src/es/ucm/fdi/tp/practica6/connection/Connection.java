@@ -5,13 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import es.ucm.fdi.tp.basecode.bgame.control.GameFactory;
-import es.ucm.fdi.tp.basecode.bgame.model.GameError;
-import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-
 public class Connection {
 
 	private Socket socket;
+	//private PrintStream out;
+	//private Scanner in;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	
@@ -34,9 +32,9 @@ public class Connection {
 	 * @throws IOException
 	 */
 	public void sendObject(Object r) throws IOException{
-		out.reset();
 		out.writeObject(r);
-		out.flush();		
+		out.flush();
+		out.reset();
 	}
 	
 	/**	

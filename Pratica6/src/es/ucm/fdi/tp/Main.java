@@ -158,7 +158,7 @@ public class Main {
 	 * <p>
 	 * Puerto de escucha por defecto para el servidor.
 	 */
-	final private static Integer DEFAULT_SERVER_PORT = 9999;
+	final private static Integer DEFAULT_SERVER_PORT = 8989;
 
 	/**
 	 * Builds the server port (-sp or --server-port) CLI option.
