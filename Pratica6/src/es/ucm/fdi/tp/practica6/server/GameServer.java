@@ -235,17 +235,17 @@ public class GameServer extends Controller implements GameObserver {
 	 * @param message to show in the tex area
 	 */
 	private void log(String message){
-		SwingUtilities.invokeLater(new Runnable(){
+			SwingUtilities.invokeLater(new Runnable(){
 
-			@Override
-			public void run() {
-				try {
-				infoStatusArea.append(message + System.getProperty("line.separator"));
-				} catch (NullPointerException e) {
-					infoStatusArea.setText("null");
-				}
-			}			
-		});
+				@Override
+				public void run() {
+					try {
+						infoStatusArea.append(message + System.getProperty("line.separator"));
+					} catch (NullPointerException e) {
+						infoStatusArea.setText("null");
+					}
+				}			
+			});
 	}
 	
 	
@@ -255,27 +255,27 @@ public class GameServer extends Controller implements GameObserver {
 	 * @throws IOException caused by {@link stopped} value in false
 	 */
 	private void startServer() throws IOException, ClassNotFoundException {
-		this.server = new ServerSocket(port);
-		this.stopped = false;
-		
-		
+		this.server = new ServerSocket(port);			
+		this.stopped = false;		
 		/*
 		 * El bucle del servidor: esperar a que un cliente conecete y pasar el socket correspondiente a handle Request para resonder a la peticion
 		 */
 		while(!this.stopped){
 			try{
+				
 				//accept a connection into a socket s
 				Socket s = this.server.accept();
 				
 				//log a corresponding message
-				this.log("client trying to connect from port " + port);
+				this.log("client trying to connect from port " + s.getPort());
 				//call handleRequest(s) to handle the request
-				this.handleRequestInThread(s);
+				this.handleRequest(s);				
+				
 			}catch(IOException e ){
 				if (!this.stopped)
 					this.log("Error while waiting for a connection: " + e.getMessage());
-			}
-		}
+			}			
+		}		
 	}
 
 /**
@@ -297,7 +297,7 @@ public class GameServer extends Controller implements GameObserver {
 		/*
 		 * Limitar los intentos de conexiones por encima del umbral de jugadores 
 		 */
-		if(this.numOfConnectedPlayers > this.pieces.size()){
+		if(this.numOfConnectedPlayers >= this.numPlayers){
 			c.sendObject(new GameError("Maximum players connections reached"));
 			c.stop();
 			return;
@@ -318,12 +318,12 @@ public class GameServer extends Controller implements GameObserver {
 		c.sendObject("OK");
 		c.sendObject(this.gameFactory);
 		c.sendObject(this.pieces.get(numOfConnectedPlayers -1));
-		
+		this.log((String) c.getObject());
 		/*
 		 * Si se cumple con el numero de jugadores se inicia la partida
 		 */
 		if(this.numOfConnectedPlayers == this.numPlayers){
-			this.start();
+			game.start(pieces);
 		}
 		
 		/*
@@ -334,36 +334,7 @@ public class GameServer extends Controller implements GameObserver {
 		}catch(IOException | ClassNotFoundException _e){}
 	}
 	
-	Executor exec = Executors.newCachedThreadPool();
 	
-	public void handleRequestInThread(Socket s){
-		exec.execute(new Runnable(){
-
-			@Override
-			public void run() {
-				try{
-					try {
-						handleRequest(s);
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}					
-				}catch(IOException e){}
-				
-			}			
-		});
-			/*public void run(){
-				try{
-					try {
-						handleRequest(s);
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}catch(IOException e){}
-			}
-		}.start();*/
-	}
 
 	/**
 	 * 
@@ -372,21 +343,33 @@ public class GameServer extends Controller implements GameObserver {
 	private void startClientListener(Connection c) {
 	this.gameOver = false;
 	
-	Thread t = new Thread();
+	Thread t = new Thread( new Runnable() {
+		
+		@Override
+		public void run() {
+			while(!stopped && !gameOver){}
+			//leer el comandno
+			Command cmd;
+			try {
+				cmd = (Command) c.getObject();
+				cmd.execute(GameServer.this);
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//ejecutar el comando
+		}
+		
+	});
 	
 	/*
 	 * Iniciar una hebra para ejecutar el bucle mientras no haya terminado el juego
 	 * ni que el servidor se haya parado
 	 */
 	t.start();
-	
-	while(!stopped && !gameOver){}
-		//leer el comandno
-		Command cmd = (Command) c;
-		//ejecutar el comando
-		cmd.execute(this);
-}
+	}
 
+	
 //------------------------------------------OBSERVABLE EVENTS--------------------------------------//
 
 
@@ -402,6 +385,7 @@ public class GameServer extends Controller implements GameObserver {
 	
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		System.out.println("onstart");
 		fowardNotification(new GameStartResponse(board, gameDesc, pieces, turn));
 	}
 

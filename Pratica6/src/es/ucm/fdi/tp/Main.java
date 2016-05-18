@@ -1168,11 +1168,7 @@ public class Main {
 	 */
 	private static void startServer() {		
 		GameServer c = new GameServer(gameFactory, pieces, serverPort); 			
-		try{
-			c.start();
-		}catch(Exception e){
-			System.err.println("Something goes wrong, the server can´t start");
-		}		
+		c.start();
 	}
 
 	/**
@@ -1221,9 +1217,12 @@ public class Main {
 			startGame();
 			break;
 		case CLIENT:
+			System.out.println(applicationMode);
+
 			startClient();
 			break;
 		case SERVER:
+			System.out.println(applicationMode);
 			startServer();
 			break;
 		default:

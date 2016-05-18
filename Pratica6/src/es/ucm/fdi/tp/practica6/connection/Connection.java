@@ -19,7 +19,7 @@ public class Connection {
 	 * @throws IOException
 	 */
 	public Connection(Socket socket) throws IOException{
-		this.socket = socket;
+		this.socket = socket;		
 		this.out = new ObjectOutputStream(this.socket.getOutputStream());
 		this.in = new ObjectInputStream(this.socket.getInputStream());
 	}
